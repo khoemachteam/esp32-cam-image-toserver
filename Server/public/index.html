@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ESP32-CAM live</title>
+    <style>
+        .container {
+            width: 1600px; /* Adjust as needed */
+            height: 1600px; /* Adjust as needed */
+            overflow: hidden;
+            position: relative;
+            margin: 20px auto; /* Centers the container horizontally */
+        }
+        #image {
+            transform-origin: center;
+        }
+        .button-container {
+            margin: 50px; /* Adjust as needed */
+        }
+        #rotate {
+            padding: 20px;
+            font-size: medium;
+        }
+    </style>
+</head>
+<body>
+    <h1>ESP32-CAM image live from KhoeMach Team</h1>
+    <div class="button-container">    
+        <button id="rotate">Rotate Image</button> 
+    </div>
+    <div class="container">
+        <img id="image" src="" alt="Image will be displayed here">
+    </div>
+    
+    <script>
+        const serverUrl = '<server address>/api/image/khoemach';
+
+        let rotation = 0;
+        document.getElementById('rotate').addEventListener('click', function() {
+            rotation += 90;
+            document.getElementById('image').style.transform = 'rotate(' + rotation + 'deg)';
+        });
+
+        function fetchImage(){
+            // Replace 'clientid' with the actual client ID
+            fetch(serverUrl)
+                .then(response => response.text())
+                .then(data => {
+                    const imgElement = document.getElementById('image');
+                    if(data.includes("data:image")) {
+                        imgElement.src = data; // directly assign the base64 string to rc
+                    } else {
+                        imgElement.src = 'data:image/png;base64,' + data;
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+        setInterval(fetchImage, 30);
+    </script>
+</body>
+</html>
